@@ -53,6 +53,7 @@ except ImportError:
   multiprocessing = None
 
 from command import Command, MirrorSafeCommand
+from itertools import repeat
 
 class Nix(Command, MirrorSafeCommand):
   common = True
@@ -93,7 +94,11 @@ class Nix(Command, MirrorSafeCommand):
         oS += '    ref = "' + p.revisionExpr.split('/')[-1] + '";\n'
       else:
         oS += '    ref = "' + p.revisionExpr + '";\n'
-      oS += '    rev = "' + p._LsRemote(p.revisionExpr).split('\t')[0] + '";\n'
+      while repeat(None, 20):
+        raw_rev = p._LsRemote(p.revisionExpr)
+        if raw_rev != None:
+          break
+      oS += '    rev = "' + raw_rev.split('\t')[0] + '";\n'
       oS += '    name = "' + p.relpath.replace('/', '=') + '";\n'
       oS += '  })\n'
     oS += '];\n}'
