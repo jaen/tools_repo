@@ -89,4 +89,4 @@ class Dumpjson(Command, MirrorSafeCommand):
         }
         for p in all_projects
     };
-    print(json.dumps(data))
+    print(json.dumps(data, sort_keys=True))
