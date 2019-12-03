@@ -98,7 +98,7 @@ class Nix(Command, MirrorSafeCommand):
         raw_rev = p._LsRemote(p.revisionExpr)
         if raw_rev != None:
           break
-      oS += '    rev = "' + raw_rev.split('\t')[0] + '";\n'
+      # oS += '    rev = "' + raw_rev.split('\t')[0] + '";\n'
       oS += '    name = "' + p.relpath.replace('/', '=') + '";\n'
       oS += '  })\n'
     oS += '];\n}'
