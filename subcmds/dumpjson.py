@@ -86,7 +86,7 @@ class Dumpjson(Command, MirrorSafeCommand):
         p.name: {
             "url": p.remote.url,
             "relpath": p.relpath,
-            "groups": p.groups,
+            "groups": sorted(p.groups),
             "revisionExpr": p.revisionExpr,
             "rev": p.rev,
             "linkfiles": [
