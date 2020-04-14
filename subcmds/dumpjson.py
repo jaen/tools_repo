@@ -54,12 +54,19 @@ except ImportError:
 
 import sys
 import json
+import re
 
 from command import Command, MirrorSafeCommand
 
 def _fetch_revs(p, sem):
-    with sem:
-        p.rev = p._LsRemote(p.revisionExpr).split('\t')[0]
+    if re.match("[0-9a-f]{40}", p.revisionExpr):
+        # Use revisionExpr if it is already a SHA1 hash
+        p.rev = p.revisionExpr
+    else:
+        # Otherwise we need to grab the hash from the remote source
+        with sem:
+            p.rev = p._LsRemote(p.revisionExpr).split('\t')[0]
+            assert p.rev != ""
 
 class Dumpjson(Command, MirrorSafeCommand):
   common = True
