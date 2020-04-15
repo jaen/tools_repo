@@ -97,7 +97,7 @@ class Dumpjson(Command, MirrorSafeCommand):
             "revisionExpr": p.revisionExpr,
             "rev": p.rev,
             "linkfiles": [
-                { "src_rel_to_dest": l.src_rel_to_dest,
+                { "src": l.src,
                  "dest": l.dest,
                  }
                 for l in p.linkfiles
