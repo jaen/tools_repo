@@ -89,11 +89,12 @@ class Dumpjson(Command, MirrorSafeCommand):
     for t in threads:
         t.join()
 
+    group_filter = lambda g: not (g == "all" or g.startswith("name:") or g.startswith("path:"))
     data = {
         p.name: {
             "url": p.remote.url,
             "relpath": p.relpath,
-            "groups": sorted(p.groups),
+            "groups": sorted(filter(group_filter, p.groups)),
             "revisionExpr": p.revisionExpr,
             "rev": p.rev,
             "linkfiles": [
