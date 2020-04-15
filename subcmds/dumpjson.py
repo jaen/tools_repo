@@ -89,27 +89,20 @@ class Dumpjson(Command, MirrorSafeCommand):
     for t in threads:
         t.join()
 
-    group_filter = lambda g: not (g == "all" or g.startswith("name:") or g.startswith("path:"))
-    data = {
-        p.name: {
+    data = {}
+    for p in all_projects:
+        data[p.name] = {
             "url": p.remote.url,
             "relpath": p.relpath,
-            "groups": sorted(filter(group_filter, p.groups)),
             "revisionExpr": p.revisionExpr,
             "rev": p.rev,
-            "linkfiles": [
-                { "src": l.src,
-                 "dest": l.dest,
-                 }
-                for l in p.linkfiles
-            ],
-            "copyfiles": [
-                { "src": c.src,
-                 "dest": c.dest,
-                 }
-                for c in p.copyfiles
-            ],
         }
-        for p in all_projects
-    };
+        filtered_groups = filter(lambda g: not (g == "all" or g.startswith("name:") or g.startswith("path:")), p.groups)
+        if filtered_groups:
+            data[p.name]["groups"] = sorted(filtered_groups)
+        if p.linkfiles:
+            data[p.name]["linkfiles"] = [ { "src": l.src, "dest": l.dest } for l in p.linkfiles ]
+        if p.copyfiles:
+            data[p.name]["copyfiles"] = [ { "src": c.src, "dest": c.dest } for c in p.copyfiles ]
+
     print(json.dumps(data, sort_keys=True))
