@@ -91,18 +91,17 @@ class Dumpjson(Command, MirrorSafeCommand):
 
     data = {}
     for p in all_projects:
-        data[p.name] = {
+        data[p.relpath] = {
             "url": p.remote.url,
-            "relpath": p.relpath,
             "revisionExpr": p.revisionExpr,
             "rev": p.rev,
         }
         filtered_groups = filter(lambda g: not (g == "all" or g.startswith("name:") or g.startswith("path:")), p.groups)
         if filtered_groups:
-            data[p.name]["groups"] = sorted(filtered_groups)
+            data[p.relpath]["groups"] = sorted(filtered_groups)
         if p.linkfiles:
-            data[p.name]["linkfiles"] = [ { "src": l.src, "dest": l.dest } for l in p.linkfiles ]
+            data[p.relpath]["linkfiles"] = [ { "src": l.src, "dest": l.dest } for l in p.linkfiles ]
         if p.copyfiles:
-            data[p.name]["copyfiles"] = [ { "src": c.src, "dest": c.dest } for c in p.copyfiles ]
+            data[p.relpath]["copyfiles"] = [ { "src": c.src, "dest": c.dest } for c in p.copyfiles ]
 
     print(json.dumps(data, sort_keys=True))
