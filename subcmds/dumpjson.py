@@ -77,12 +77,15 @@ class Dumpjson(Command, MirrorSafeCommand):
   helpDescription = """
 """
 
+  def _Options(self, p):
+    p.add_option('-j', '--jobs',
+                 dest='jobs', action='store', type='int', default=8,
+                 help="number of projects to check simultaneously")
+
   def Execute(self, opt, args):
     all_projects = self.GetProjects(args, missing_ok=True, submodules_ok=False)
 
-    MAX_THREADS = 8
-    sem = _threading.Semaphore(MAX_THREADS)
-
+    sem = _threading.Semaphore(opt.jobs)
     threads = [ _threading.Thread(target=_fetch_revs, args=(p, sem)) for p in all_projects ]
     for t in threads:
         t.start()
