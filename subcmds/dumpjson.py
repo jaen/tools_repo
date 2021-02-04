@@ -58,11 +58,6 @@ import re
 
 from command import Command, MirrorSafeCommand
 
-def _fetch_revs(p, sem):
-  with sem:
-      p.rev = p._LsRemote(p.revisionExpr).split('\t')[0]
-      assert p.rev != ""
-
 class Dumpjson(Command, MirrorSafeCommand):
   common = True
   helpSummary = "Export json file with sources"
@@ -73,41 +68,16 @@ class Dumpjson(Command, MirrorSafeCommand):
 """
 
   def _Options(self, p):
-    p.add_option('-j', '--jobs',
-                 dest='jobs', action='store', type='int', default=8,
-                 help="number of projects to check simultaneously")
-    p.add_option('-l', '--local-only',
-                 dest='local_only', action='store_true',
-                 help="don't fetch project revisions even if they are missing")
+    pass
 
   def Execute(self, opt, args):
     all_projects = self.GetProjects(args, missing_ok=True, submodules_ok=False)
-
-    # Fill out rev if we already have the information available
-    to_fetch = []
-    for p in all_projects:
-      if re.match("[0-9a-f]{40}", p.revisionExpr):
-          # Use revisionExpr if it is already a SHA1 hash
-          p.rev = p.revisionExpr
-      else:
-        p.rev = None
-        to_fetch.append(p)
-
-    if not opt.local_only:
-      # Fetch rev for projects we don't know yet
-      sem = _threading.Semaphore(opt.jobs)
-      threads = [ _threading.Thread(target=_fetch_revs, args=(p, sem)) for p in to_fetch ]
-      for t in threads:
-          t.start()
-      for t in threads:
-          t.join()
 
     data = {}
     for p in all_projects:
         data[p.relpath] = {
             "url": p.remote.url,
             "revisionExpr": p.revisionExpr,
-            "rev": p.rev,
         }
         filtered_groups = filter(lambda g: not (g == "all" or g.startswith("name:") or g.startswith("path:")), p.groups)
         if filtered_groups:
