@@ -2887,8 +2887,8 @@ class Project:
                 )
 
     def _LsRemote(self, refs):
-        cmd = ["ls-remote", self.remote.name, refs]
-        p = GitCommand(self, cmd, capture_stdout=True)
+        cmd = ["ls-remote", self.remote.url, refs]
+        p = GitCommand(self, cmd, cwd="/", capture_stdout=True)
         if p.Wait() == 0:
             return p.stdout
         return None
