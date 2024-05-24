@@ -15,24 +15,11 @@
 
 from __future__ import print_function
 
-from pyversion import is_python3
-if is_python3():
-  import http.cookiejar as cookielib
-  import urllib.error
-  import urllib.parse
-  import urllib.request
-  import xmlrpc.client
-else:
-  import imp
-  import urllib2
-  import urlparse
-  import xmlrpclib
-  urllib = imp.new_module('urllib')
-  urllib.error = urllib2
-  urllib.parse = urlparse
-  urllib.request = urllib2
-  xmlrpc = imp.new_module('xmlrpc')
-  xmlrpc.client = xmlrpclib
+import http.cookiejar as cookielib
+import urllib.error
+import urllib.parse
+import urllib.request
+import xmlrpc.client
 
 try:
   import threading as _threading
